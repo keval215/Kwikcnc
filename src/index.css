@@ -135,8 +135,8 @@
 
 /* Cut-corner pill buttons */
 .pill-cut-corner {
-  border-radius: 999px;
-  clip-path: polygon(12% 0, 100% 0, 100% 100%, 12% 100%, 0 80%, 0 20%);
+  border-radius: 50px;
+  clip-path: polygon(20px 0, 100% 0, 100% 100%, 20px 100%, 0 calc(100% - 15px), 0 15px);
   border: none;
   position: relative;
   overflow: hidden;
@@ -159,8 +159,8 @@
 }
 
 .pill-cut-corner-filled {
-  border-radius: 999px;
-  clip-path: polygon(15% 0, 100% 0, 100% 100%, 15% 100%, 0 75%, 0 25%);
+  border-radius: 50px;
+  clip-path: polygon(25px 0, 100% 0, 100% 100%, 25px 100%, 0 calc(100% - 20px), 0 20px);
   border: 2px solid hsl(var(--industrial-black));
   position: relative;
   overflow: hidden;
