@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { TypewriterEffect } from "@/components/ui/typewriter-effect";
+import TypewriterText from "@/components/TypewriterText";
 import CNCPartViewer from "@/components/3d/CNCPartViewer";
 import { useState, useEffect } from "react";
 
@@ -104,11 +104,11 @@ export default function HeroSection() {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            {/* Main Heading with Typewriter */}
-            <TypewriterEffect
-              words={words}
+            <TypewriterText
+              text="CNC MACHINING ON STEROIDS"
+              delay={100}
+              highlightWord="STEROIDS"
               className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
-              cursorClassName="bg-industrial-black"
               onComplete={() => setShowSupportingText(true)}
             />
           </motion.div>
@@ -122,10 +122,10 @@ export default function HeroSection() {
           >
             {showSupportingText && (
               <div className="opacity-90">
-                <TypewriterEffect
-                  words={supportingWords}
+                <TypewriterText
+                  text="Because in the era of idea to app in mins Manufacturing shouldn't take weeks"
+                  delay={20}
                   className="text-base md:text-lg lg:text-xl text-left font-stencil"
-                  cursorClassName="bg-transparent"
                 />
               </div>
             )}
