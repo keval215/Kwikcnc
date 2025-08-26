@@ -11,11 +11,11 @@ const Index = () => {
       {/* Global Interactive Grid Background */}
       <InteractiveGridPattern
         className={cn(
-          "fixed inset-0 opacity-20 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]"
+          "fixed inset-0 opacity-30 z-0"
         )}
-        width={20}
-        height={20}
-        squares={[80, 80]}
+        width={40}
+        height={40}
+        squares={[50, 50]}
       />
       
       <SmoothCursor />
