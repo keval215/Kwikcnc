@@ -87,24 +87,6 @@ function LoadingFallback() {
 export default function CNCPartViewer() {
   return (
     <div className="w-full h-[500px] bg-industrial-light rounded-lg overflow-hidden shadow-2xl border border-industrial-medium">
-      {/* Model Info Overlay */}
-      <div className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-        <h3 className="font-stencil text-sm font-bold text-industrial-black">MODEL: CNC-P01</h3>
-        <p className="text-xs text-industrial-medium font-stencil-display">
-          Material: 6061-T6 Aluminum
-        </p>
-      </div>
-      
-      {/* Precision Info Overlay */}
-      <div className="absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-        <h4 className="font-stencil text-sm font-bold text-industrial-black">
-          PRECISION: ±0.001"
-        </h4>
-        <p className="text-xs text-industrial-medium font-stencil-display">
-          Surface Finish: 32μin Ra
-        </p>
-      </div>
-      
       {/* Interaction Instructions */}
       <div className="absolute bottom-4 right-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
         <p className="text-xs text-industrial-medium font-stencil-display">
