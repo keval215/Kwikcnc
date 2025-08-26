@@ -2,10 +2,7 @@
 
 import { motion } from "motion/react";
 import { TypewriterEffect } from "@/components/ui/typewriter-effect";
-import { Cover } from "@/components/ui/cover";
 import CNCPartViewer from "@/components/3d/CNCPartViewer";
-import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
-import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 export default function HeroSection() {
@@ -38,30 +35,8 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(210_14%_77%)] dark:bg-industrial-black">
       
-      {/* Technical Drawing Overlays */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div 
-          className="absolute top-10 left-10 w-64 h-64 bg-gradient-to-br from-industrial-medium/20 to-transparent"
-          style={{
-            backgroundImage: `
-              linear-gradient(90deg, #6c757d 1px, transparent 1px),
-              linear-gradient(180deg, #6c757d 1px, transparent 1px)
-            `,
-            backgroundSize: '20px 20px'
-          }}
-        />
-        <div 
-          className="absolute bottom-10 right-10 w-48 h-48 bg-gradient-to-tl from-industrial-dark/20 to-transparent"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 50% 50%, #343a40 1px, transparent 1px)
-            `,
-            backgroundSize: '15px 15px'
-          }}
-        />
-      </div>
 
       {/* Main Content */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">

@@ -65,7 +65,7 @@ export const HyperText = ({
   return (
     <motion.span
       className={cn(
-        "font-mono text-black dark:text-white",
+  "font-mono",
         className,
       )}
       {...framerProps}
