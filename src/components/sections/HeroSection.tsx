@@ -108,7 +108,7 @@ export default function HeroSection() {
               text="CNC MACHINING ON STEROIDS"
               delay={100}
               highlightWord="STEROIDS"
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
+              className="text-4xl md:text-6xl lg:text-7xl font-stencil font-bold text-left"
               onComplete={() => setShowSupportingText(true)}
             />
           </motion.div>
