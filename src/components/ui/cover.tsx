@@ -131,7 +131,7 @@ export const Cover = ({
           },
         }}
         className={cn(
-          "text-black group-hover/cover:text-white inline-block relative z-20 transition duration-200",
+          "text-industrial-black group-hover/cover:text-white inline-block relative z-20 transition duration-200",
           className
         )}
       >
