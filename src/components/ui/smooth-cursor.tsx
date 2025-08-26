@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useSpring } from "motion/react";
-import { FC, JSX, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion, useSpring, useMotionValue } from "framer-motion";
 
 interface Position {
   x: number;
@@ -18,7 +18,7 @@ export interface SmoothCursorProps {
   };
 }
 
-const DefaultCursorSVG: FC = () => {
+const DefaultCursorSVG: React.FC = () => {
   return (
     <svg
       width="24"
@@ -38,129 +38,97 @@ const DefaultCursorSVG: FC = () => {
   );
 };
 
-export function SmoothCursor({
-  cursor = <DefaultCursorSVG />,
-  springConfig = {
-    damping: 45,
-    stiffness: 400,
-    mass: 1,
-    restDelta: 0.001,
-  },
+export function SmoothCursor({ 
+  cursor = <DefaultCursorSVG />, 
+  springConfig = { 
+    damping: 25, 
+    stiffness: 400, 
+    mass: 0.5, 
+    restDelta: 0.01 
+  } 
 }: SmoothCursorProps) {
-  const [isMoving, setIsMoving] = useState(false);
-  const lastMousePos = useRef<Position>({ x: 0, y: 0 });
-  const velocity = useRef<Position>({ x: 0, y: 0 });
-  const lastUpdateTime = useRef(Date.now());
-  const previousAngle = useRef(0);
-  const accumulatedRotation = useRef(0);
-
   const cursorX = useSpring(0, springConfig);
   const cursorY = useSpring(0, springConfig);
-  const rotation = useSpring(0, {
-    ...springConfig,
-    damping: 60,
-    stiffness: 300,
-  });
-  const scale = useSpring(1, {
-    ...springConfig,
-    stiffness: 500,
-    damping: 35,
-  });
+  const rotation = useSpring(0, springConfig);
+  const scale = useSpring(1, springConfig);
+  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
 
   useEffect(() => {
-    const updateVelocity = (currentPos: Position) => {
-      const currentTime = Date.now();
-      const deltaTime = currentTime - lastUpdateTime.current;
+    let animationFrame: number;
+    let prevPosition: Position = { x: 0, y: 0 };
+    let velocity: Position = { x: 0, y: 0 };
 
-      if (deltaTime > 0) {
-        velocity.current = {
-          x: (currentPos.x - lastMousePos.current.x) / deltaTime,
-          y: (currentPos.y - lastMousePos.current.y) / deltaTime,
-        };
-      }
+    const handleMouseMove = (e: MouseEvent) => {
+      const position: Position = { x: e.clientX, y: e.clientY };
+      
+      velocity = {
+        x: position.x - prevPosition.x,
+        y: position.y - prevPosition.y,
+      };
+      
+      prevPosition = position;
+      
+      cursorX.set(position.x);
+      cursorY.set(position.y);
+      
+      const speed = Math.sqrt(velocity.x ** 2 + velocity.y ** 2);
+      const rotationAmount = velocity.x * 0.1;
+      const scaleAmount = Math.min(1 + speed * 0.01, 1.2);
+      
+      rotation.set(rotationAmount);
+      scale.set(scaleAmount);
 
-      lastUpdateTime.current = currentTime;
-      lastMousePos.current = currentPos;
-    };
-
-    const smoothMouseMove = (e: MouseEvent) => {
-      const currentPos = { x: e.clientX, y: e.clientY };
-      updateVelocity(currentPos);
-
-      const speed = Math.sqrt(
-        Math.pow(velocity.current.x, 2) + Math.pow(velocity.current.y, 2),
+      // Check if hovering over interactive elements
+      const element = document.elementFromPoint(e.clientX, e.clientY);
+      const isInteractive = element && (
+        element.tagName === 'BUTTON' ||
+        element.tagName === 'A' ||
+        element.getAttribute('role') === 'button' ||
+        element.classList.contains('cursor-pointer') ||
+        window.getComputedStyle(element).cursor === 'pointer'
       );
-
-      cursorX.set(currentPos.x);
-      cursorY.set(currentPos.y);
-
-      if (speed > 0.1) {
-        const currentAngle =
-          Math.atan2(velocity.current.y, velocity.current.x) * (180 / Math.PI) +
-          90;
-
-        let angleDiff = currentAngle - previousAngle.current;
-        if (angleDiff > 180) angleDiff -= 360;
-        if (angleDiff < -180) angleDiff += 360;
-        accumulatedRotation.current += angleDiff;
-        rotation.set(accumulatedRotation.current);
-        previousAngle.current = currentAngle;
-
-        scale.set(0.95);
-        setIsMoving(true);
-
-        const timeout = setTimeout(() => {
-          scale.set(1);
-          setIsMoving(false);
-        }, 150);
-
-        return () => clearTimeout(timeout);
-      }
+      
+      setIsHoveringInteractive(!!isInteractive);
     };
 
-    let rafId: number;
-    const throttledMouseMove = (e: MouseEvent) => {
-      if (rafId) return;
-
-      rafId = requestAnimationFrame(() => {
-        smoothMouseMove(e);
-        rafId = 0;
-      });
+    const animate = () => {
+      document.addEventListener('mousemove', handleMouseMove);
+      animationFrame = requestAnimationFrame(animate);
     };
 
-    document.body.style.cursor = "none";
-    window.addEventListener("mousemove", throttledMouseMove);
+    // Hide default cursor and start animation
+    document.body.style.cursor = 'none';
+    animate();
 
     return () => {
-      window.removeEventListener("mousemove", throttledMouseMove);
-      document.body.style.cursor = "auto";
-      if (rafId) cancelAnimationFrame(rafId);
+      document.body.style.cursor = '';
+      document.removeEventListener('mousemove', handleMouseMove);
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
     };
   }, [cursorX, cursorY, rotation, scale]);
 
   return (
     <motion.div
       style={{
-        position: "fixed",
+        position: 'fixed',
         left: cursorX,
         top: cursorY,
-        translateX: "-50%",
-        translateY: "-50%",
+        pointerEvents: 'none',
+        zIndex: 9999,
+        transform: 'translate(-50%, -50%)',
         rotate: rotation,
         scale: scale,
-        zIndex: 9999,
-        pointerEvents: "none",
-        willChange: "transform",
       }}
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 30,
-      }}
+      className={isHoveringInteractive ? 'text-white' : ''}
     >
-      {cursor}
+      <div style={{ 
+        filter: isHoveringInteractive ? 'invert(1)' : 'none',
+        transition: 'filter 0.2s ease'
+      }}>
+        {cursor}
+      </div>
     </motion.div>
   );
 }
