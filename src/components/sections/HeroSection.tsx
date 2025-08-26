@@ -47,8 +47,7 @@ export default function HeroSection() {
         )}
         width={20}
         height={20}
-        numSquares={80}
-        maxOpacity={0.5}
+        squares={[80, 80]}
       />
       
       {/* Technical Drawing Overlays */}
