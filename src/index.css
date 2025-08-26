@@ -134,12 +134,7 @@
 }
 
 /* Cut-corner pill buttons */
-.clip-path-cut-corner {
+.pill-cut-corner {
   border-radius: 999px;
-  clip-path: polygon(8% 0, 100% 0, 100% 100%, 8% 100%, 0 85%, 0 15%);
-}
-
-.clip-path-cut-corner-filled {
-  border-radius: 999px;
-  clip-path: polygon(8% 0, 100% 0, 100% 100%, 8% 100%, 0 85%, 0 15%);
+  clip-path: polygon(10% 0, 100% 0, 100% 100%, 10% 100%, 0 85%, 0 15%);
 }
