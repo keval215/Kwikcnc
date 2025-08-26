@@ -6,7 +6,7 @@ import CNCPartViewer from "@/components/3d/CNCPartViewer";
 import { useState, useEffect } from "react";
 
 export default function HeroSection() {
-  const [showCover, setShowCover] = useState(false);
+  // showCover removed
   
   const words = [
     {
@@ -27,17 +27,73 @@ export default function HeroSection() {
     },
   ];
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowCover(true);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+  const supportingWords = [
+    {
+      text: "Because",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "in",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "the",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "era",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "of",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "idea",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "to",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "app",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "in",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "mins",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "Manufacturing",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "shouldn't",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "take",
+      className: "text-industrial-black font-stencil",
+    },
+    {
+      text: "weeks",
+      className: "text-industrial-black font-stencil",
+    },
+  ];
+
+  // Cover animation effect removed
+
+  // Animation timing: typewriter duration (words.length * 0.3s + stagger)
+  // Show supporting text when headline typewriter completes
+  const [showSupportingText, setShowSupportingText] = useState(false);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(210_14%_77%)] dark:bg-industrial-black">
-      
-
       {/* Main Content */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">
         {/* Left Side - Text Content */}
@@ -53,20 +109,26 @@ export default function HeroSection() {
               words={words}
               className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
               cursorClassName="bg-industrial-black"
-              showCover={showCover}
+              onComplete={() => setShowSupportingText(true)}
             />
           </motion.div>
 
-          {/* Supporting Text */}
+          {/* Supporting Text with Typewriter animation after main typewriter */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className="space-y-4"
           >
-            <p className="text-lg text-industrial-medium max-w-2xl leading-relaxed">
-              because in the era of idea to app in mins Manufacturing shouldn't take weeks
-            </p>
+            {showSupportingText && (
+              <div className="opacity-90">
+                <TypewriterEffect
+                  words={supportingWords}
+                  className="text-base md:text-lg lg:text-xl text-left font-stencil"
+                  cursorClassName="bg-transparent"
+                />
+              </div>
+            )}
           </motion.div>
 
           {/* CTA Button */}
@@ -93,7 +155,6 @@ export default function HeroSection() {
           </motion.div>
         </div>
       </div>
-
     </section>
   );
 }

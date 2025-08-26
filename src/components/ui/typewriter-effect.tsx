@@ -9,7 +9,7 @@ export const TypewriterEffect = ({
   words,
   className,
   cursorClassName,
-  showCover = false,
+  onComplete,
 }: {
   words: {
     text: string;
@@ -17,7 +17,7 @@ export const TypewriterEffect = ({
   }[];
   className?: string;
   cursorClassName?: string;
-  showCover?: boolean;
+  onComplete?: () => void;
 }) => {
   const [scope, animate] = useAnimate();
   useEffect(() => {
@@ -33,6 +33,15 @@ export const TypewriterEffect = ({
         ease: "easeInOut",
       }
     );
+    // estimate total duration and call onComplete when done
+    if (onComplete) {
+      const totalChars = words.reduce((acc, w) => acc + w.text.length, 0);
+      const staggerDelay = 0.1; // seconds (matches stagger above)
+      const charAnimDuration = 0.3; // seconds (matches duration above)
+      const totalTimeMs = Math.max(0, (totalChars - 1) * staggerDelay + charAnimDuration) * 1000 + 80;
+      const t = setTimeout(() => onComplete(), totalTimeMs);
+      return () => clearTimeout(t);
+    }
   }, [scope.current]);
 
   const renderWords = () => {
@@ -41,24 +50,19 @@ export const TypewriterEffect = ({
         {words.map((word, idx) => {
           return (
              <div key={`word-${idx}`} className="inline-block">
-               {word.text === "STEROIDS" && showCover ? (
-                 <Cover className="bg-industrial-black text-white font-stencil">
-                   {word.text}
-                 </Cover>
-               ) : (
-                 word.text.split("").map((char, index) => (
-                   <motion.span
-                     initial={{}}
-                     key={`char-${index}`}
-                     className={cn(
-                       `dark:text-white text-black opacity-0 hidden`,
-                       word.className
-                     )}
-                   >
-                     {char}
-                   </motion.span>
-                 ))
-               )}
+               {/* Always render typewriter effect, no cover animation for STEROIDS */}
+               {word.text.split("").map((char, index) => (
+                 <motion.span
+                   initial={{}}
+                   key={`char-${index}`}
+                   className={cn(
+                     `dark:text-white text-black opacity-0 hidden`,
+                     word.className
+                   )}
+                 >
+                   {char}
+                 </motion.span>
+               ))}
                &nbsp;
              </div>
           );
@@ -69,7 +73,7 @@ export const TypewriterEffect = ({
   return (
     <div
       className={cn(
-        "text-base sm:text-xl md:text-3xl lg:text-5xl font-bold text-center",
+        "text-base sm:text-xl md:text-3xl lg:text-5xl text-center",
         className
       )}
     >

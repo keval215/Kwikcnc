@@ -65,11 +65,11 @@ export const HyperText = ({
   return (
     <motion.span
       className={cn(
-  "font-mono",
+        "font-mono",
         className,
       )}
       {...framerProps}
-      onMouseEnter={triggerAnimation}
+      // Remove hover animation
     >
       {displayText.join("")}
     </motion.span>
