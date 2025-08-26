@@ -136,6 +136,51 @@
 /* Cut-corner pill buttons */
 .pill-cut-corner {
   border-radius: 999px;
-  clip-path: polygon(10% 0, 100% 0, 100% 100%, 10% 100%, 0 85%, 0 15%);
+  clip-path: polygon(12% 0, 100% 0, 100% 100%, 12% 100%, 0 80%, 0 20%);
   border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.pill-cut-corner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.pill-cut-corner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.pill-cut-corner-filled {
+  border-radius: 999px;
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 15% 100%, 0 75%, 0 25%);
+  border: 2px solid hsl(var(--industrial-black));
+  position: relative;
+  overflow: hidden;
+  background: hsl(var(--industrial-black));
+  color: white;
+}
+
+.pill-cut-corner-filled::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.pill-cut-corner-filled:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(33, 37, 41, 0.4);
+  background: hsl(var(--industrial-dark));
 }
