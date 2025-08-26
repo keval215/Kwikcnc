@@ -11,7 +11,7 @@ const Index = () => {
       {/* Global Interactive Grid Background */}
       <InteractiveGridPattern
         className={cn(
-          "fixed inset-0 opacity-20 pointer-events-none [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]"
+          "fixed inset-0 opacity-20 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]"
         )}
         width={20}
         height={20}
