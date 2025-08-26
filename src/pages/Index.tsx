@@ -15,8 +15,8 @@ const Index = () => {
         )}
         width={30}
         height={30}
-        squares={[60, 60]}
-        squaresClassName="stroke-white/40 fill-transparent hover:fill-black hover:stroke-black"
+        squares={[50, 50]}
+        squaresClassName="stroke-white/40 fill-transparent hover:fill-black hover:stroke-black transition-all duration-300"
       />
       
       <SmoothCursor />

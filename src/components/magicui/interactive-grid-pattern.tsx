@@ -39,9 +39,8 @@ export function InteractiveGridPattern({
 
   return (
     <svg
-      width="100%"
-      height="100%"
-      viewBox={`0 0 ${width * horizontal} ${height * vertical}`}
+      width={width * horizontal}
+      height={height * vertical}
       className={cn(
         "absolute inset-0 h-full w-full",
         className,

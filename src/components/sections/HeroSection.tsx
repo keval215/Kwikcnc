@@ -39,16 +39,6 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
-      {/* Interactive Grid Background */}
-      <InteractiveGridPattern
-        className={cn(
-          "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
-          "absolute inset-0 opacity-30"
-        )}
-        width={20}
-        height={20}
-        squares={[80, 80]}
-      />
       
       {/* Technical Drawing Overlays */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
