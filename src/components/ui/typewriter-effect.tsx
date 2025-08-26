@@ -51,18 +51,35 @@ export const TypewriterEffect = ({
           return (
              <div key={`word-${idx}`} className="inline-block">
                {/* Always render typewriter effect, no cover animation for STEROIDS */}
-               {word.text.split("").map((char, index) => (
-                 <motion.span
-                   initial={{}}
-                   key={`char-${index}`}
-                   className={cn(
-                     `dark:text-white text-black opacity-0 hidden`,
-                     word.className
-                   )}
-                 >
-                   {char}
-                 </motion.span>
-               ))}
+                {word.text === "STEROIDS" ? (
+                  <Cover key={`word-cover-${idx}`}>
+                    {word.text.split("").map((char, index) => (
+                      <motion.span
+                        initial={{}}
+                        key={`char-${index}`}
+                        className={cn(
+                          `dark:text-white text-black opacity-0 hidden`,
+                          word.className
+                        )}
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </Cover>
+                ) : (
+                  word.text.split("").map((char, index) => (
+                    <motion.span
+                      initial={{}}
+                      key={`char-${index}`}
+                      className={cn(
+                        `dark:text-white text-black opacity-0 hidden`,
+                        word.className
+                      )}
+                    >
+                      {char}
+                    </motion.span>
+                  ))
+                )}
                &nbsp;
              </div>
           );

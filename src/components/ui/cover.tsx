@@ -38,7 +38,7 @@ export const Cover = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       ref={ref}
-      className="relative group/cover inline-block px-2 py-2 transition duration-200 rounded-sm"
+      className="relative hover:bg-industrial-black group/cover inline-block dark:bg-industrial-black bg-industrial-grey/20 px-2 py-2 transition duration-200 rounded-sm"
     >
       <AnimatePresence>
         {hovered && (
@@ -131,7 +131,7 @@ export const Cover = ({
           },
         }}
         className={cn(
-          "text-industrial-black inline-block relative z-20 transition duration-200",
+          "dark:text-white inline-block text-industrial-black relative z-20 group-hover/cover:text-white transition duration-200",
           className
         )}
       >
@@ -220,7 +220,7 @@ export const CircleIcon = ({
   return (
     <div
       className={cn(
-        `pointer-events-none animate-pulse group-hover/cover:hidden group-hover/cover:opacity-100 group h-2 w-2 rounded-full bg-industrial-grey opacity-20 group-hover/cover:bg-industrial-white`,
+        `pointer-events-none animate-pulse group-hover/cover:hidden group-hover/cover:opacity-100 group h-2 w-2 rounded-full bg-industrial-grey dark:bg-white opacity-20 group-hover/cover:bg-white`,
         className
       )}
     ></div>
