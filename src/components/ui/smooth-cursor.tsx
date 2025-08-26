@@ -29,11 +29,11 @@ const DefaultCursorSVG: React.FC = () => {
       className="cursor-svg"
     >
       {/* Horizontal crosshair line */}
-      <line x1="2" y1="12" x2="22" y2="12" stroke="hsl(var(--industrial-black))" strokeWidth="2" />
+      <line x1="2" y1="12" x2="22" y2="12" stroke="hsl(var(--industrial-white))" strokeWidth="2" />
       {/* Vertical crosshair line */}
-      <line x1="12" y1="2" x2="12" y2="22" stroke="hsl(var(--industrial-black))" strokeWidth="2" />
+      <line x1="12" y1="2" x2="12" y2="22" stroke="hsl(var(--industrial-white))" strokeWidth="2" />
       {/* Center dot */}
-      <circle cx="12" cy="12" r="2" fill="hsl(var(--industrial-black))" />
+      <circle cx="12" cy="12" r="2" fill="hsl(var(--industrial-white))" />
     </svg>
   );
 };
@@ -51,7 +51,6 @@ export function SmoothCursor({
   const cursorY = useSpring(0, springConfig);
   const rotation = useSpring(0, springConfig);
   const scale = useSpring(1, springConfig);
-  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
 
   useEffect(() => {
     let animationFrame: number;
@@ -77,18 +76,6 @@ export function SmoothCursor({
       
       rotation.set(rotationAmount);
       scale.set(scaleAmount);
-
-      // Check if hovering over interactive elements
-      const element = document.elementFromPoint(e.clientX, e.clientY);
-      const isInteractive = element && (
-        element.tagName === 'BUTTON' ||
-        element.tagName === 'A' ||
-        element.getAttribute('role') === 'button' ||
-        element.classList.contains('cursor-pointer') ||
-        window.getComputedStyle(element).cursor === 'pointer'
-      );
-      
-      setIsHoveringInteractive(!!isInteractive);
     };
 
     const animate = () => {
@@ -121,14 +108,9 @@ export function SmoothCursor({
         rotate: rotation,
         scale: scale,
       }}
-      className={isHoveringInteractive ? 'text-white' : ''}
+      className="mix-blend-difference"
     >
-      <div style={{ 
-        filter: isHoveringInteractive ? 'invert(1)' : 'none',
-        transition: 'filter 0.2s ease'
-      }}>
-        {cursor}
-      </div>
+      {cursor}
     </motion.div>
   );
 }
