@@ -85,20 +85,12 @@ export default function HeroSection() {
             className="space-y-6"
           >
             {/* Main Heading with Typewriter */}
-            <div className="space-y-4">
-              <TypewriterEffect
-                words={words}
-                className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
-                cursorClassName="bg-industrial-black"
-              />
-              {showCover && (
-                <div className="text-4xl md:text-6xl lg:text-7xl font-bold font-stencil -mt-4">
-                  <Cover className="bg-industrial-black text-white">
-                    STEROIDS
-                  </Cover>
-                </div>
-              )}
-            </div>
+            <TypewriterEffect
+              words={words}
+              className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
+              cursorClassName="bg-industrial-black"
+              showCover={showCover}
+            />
           </motion.div>
 
           {/* Supporting Text */}

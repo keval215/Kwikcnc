@@ -3,11 +3,13 @@
 import { cn } from "@/lib/utils";
 import { motion, stagger, useAnimate } from "motion/react";
 import { useEffect } from "react";
+import { Cover } from "@/components/ui/cover";
 
 export const TypewriterEffect = ({
   words,
   className,
   cursorClassName,
+  showCover = false,
 }: {
   words: {
     text: string;
@@ -15,6 +17,7 @@ export const TypewriterEffect = ({
   }[];
   className?: string;
   cursorClassName?: string;
+  showCover?: boolean;
 }) => {
   const [scope, animate] = useAnimate();
   useEffect(() => {
@@ -37,21 +40,27 @@ export const TypewriterEffect = ({
       <motion.div ref={scope} className="inline">
         {words.map((word, idx) => {
           return (
-            <div key={`word-${idx}`} className="inline-block">
-              {word.text.split("").map((char, index) => (
-                <motion.span
-                  initial={{}}
-                  key={`char-${index}`}
-                  className={cn(
-                    `dark:text-white text-black opacity-0 hidden`,
-                    word.className
-                  )}
-                >
-                  {char}
-                </motion.span>
-              ))}
-              &nbsp;
-            </div>
+             <div key={`word-${idx}`} className="inline-block">
+               {word.text === "STEROIDS" && showCover ? (
+                 <Cover className="bg-industrial-black text-white font-stencil">
+                   {word.text}
+                 </Cover>
+               ) : (
+                 word.text.split("").map((char, index) => (
+                   <motion.span
+                     initial={{}}
+                     key={`char-${index}`}
+                     className={cn(
+                       `dark:text-white text-black opacity-0 hidden`,
+                       word.className
+                     )}
+                   >
+                     {char}
+                   </motion.span>
+                 ))
+               )}
+               &nbsp;
+             </div>
           );
         })}
       </motion.div>
