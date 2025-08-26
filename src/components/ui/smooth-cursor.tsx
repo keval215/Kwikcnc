@@ -21,19 +21,19 @@ export interface SmoothCursorProps {
 const DefaultCursorSVG: React.FC = () => {
   return (
     <svg
-      width="24"
-      height="24"
+      width="28"
+      height="28"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="cursor-svg"
     >
       {/* Horizontal crosshair line */}
-      <line x1="2" y1="12" x2="22" y2="12" stroke="hsl(var(--industrial-white))" strokeWidth="2" />
+      <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="2.5" />
       {/* Vertical crosshair line */}
-      <line x1="12" y1="2" x2="12" y2="22" stroke="hsl(var(--industrial-white))" strokeWidth="2" />
+      <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" strokeWidth="2.5" />
       {/* Center dot */}
-      <circle cx="12" cy="12" r="2" fill="hsl(var(--industrial-white))" />
+      <circle cx="12" cy="12" r="2" fill="currentColor" />
     </svg>
   );
 };
@@ -51,6 +51,7 @@ export function SmoothCursor({
   const cursorY = useSpring(0, springConfig);
   const rotation = useSpring(0, springConfig);
   const scale = useSpring(1, springConfig);
+  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
 
   useEffect(() => {
     let animationFrame: number;
@@ -76,6 +77,17 @@ export function SmoothCursor({
       
       rotation.set(rotationAmount);
       scale.set(scaleAmount);
+
+      // Check if hovering over interactive elements and update color state
+      const element = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+      const isInteractive = !!element && (
+        element.tagName === 'BUTTON' ||
+        element.tagName === 'A' ||
+        element.getAttribute('role') === 'button' ||
+        element.classList.contains('cursor-pointer') ||
+        window.getComputedStyle(element).cursor === 'pointer'
+      );
+      setIsHoveringInteractive(isInteractive);
     };
 
     const animate = () => {
@@ -103,12 +115,12 @@ export function SmoothCursor({
         left: cursorX,
         top: cursorY,
         pointerEvents: 'none',
-        zIndex: 9999,
+        zIndex: 99999,
         transform: 'translate(-50%, -50%)',
         rotate: rotation,
         scale: scale,
+        color: isHoveringInteractive ? 'hsl(var(--industrial-white))' : 'hsl(var(--industrial-black))',
       }}
-      className="mix-blend-difference"
     >
       {cursor}
     </motion.div>
