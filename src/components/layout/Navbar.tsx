@@ -42,20 +42,13 @@ export default function Navbar() {
 
         {/* Navigation Buttons */}
         <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            size="lg"
-            className="hidden sm:inline-flex bg-transparent border-2 border-industrial-black text-industrial-black hover:bg-industrial-black hover:text-white font-stencil-display font-bold transition-all duration-300"
-          >
+          <button className="hidden sm:inline-flex px-6 py-3 bg-transparent border-2 border-industrial-black text-industrial-black font-stencil-display font-bold transition-all duration-300 pill-cut-corner">
             <HyperText>GET QUOTE</HyperText>
-          </Button>
+          </button>
           
-          <Button
-            size="lg"
-            className="bg-industrial-black text-white hover:bg-industrial-dark font-stencil-display font-bold border-2 border-industrial-black transition-all duration-300"
-          >
+          <button className="px-6 py-3 bg-industrial-black text-white font-stencil-display font-bold border-2 border-industrial-black transition-all duration-300 pill-cut-corner-filled">
             <HyperText>JOIN KWIK</HyperText>
-          </Button>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}

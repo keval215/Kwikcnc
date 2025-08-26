@@ -34,7 +34,20 @@ export function SmoothCursor() {
         y: cursorY,
       }}
     >
-      <div className="h-8 w-8 rounded-full bg-white" />
+      <svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 20 20" 
+        fill="none"
+        className="text-industrial-black"
+      >
+        <path 
+          d="M0 0 L20 10 L8 12 L6 20 Z" 
+          fill="currentColor"
+          stroke="white"
+          strokeWidth="1"
+        />
+      </svg>
     </motion.div>
   );
 }

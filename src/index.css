@@ -132,3 +132,14 @@
   @apply hover:bg-industrial-dark transition-all duration-300;
   @apply shadow-lg hover:shadow-xl;
 }
+
+/* Cut-corner pill buttons */
+.pill-cut-corner {
+  border-radius: 999px;
+  clip-path: polygon(8% 0, 100% 0, 100% 100%, 8% 100%, 0 85%, 0 15%);
+}
+
+.pill-cut-corner-filled {
+  border-radius: 999px;
+  clip-path: polygon(8% 0, 100% 0, 100% 100%, 8% 100%, 0 85%, 0 15%);
+}

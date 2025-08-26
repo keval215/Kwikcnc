@@ -6,8 +6,11 @@ import { Cover } from "@/components/ui/cover";
 import CNCPartViewer from "@/components/3d/CNCPartViewer";
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 export default function HeroSection() {
+  const [showCover, setShowCover] = useState(false);
+  
   const words = [
     {
       text: "CNC",
@@ -21,7 +24,18 @@ export default function HeroSection() {
       text: "ON",
       className: "text-industrial-black font-stencil",
     },
+    {
+      text: "STEROIDS",
+      className: "text-industrial-black font-stencil",
+    },
   ];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowCover(true);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
@@ -31,6 +45,10 @@ export default function HeroSection() {
           "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
           "absolute inset-0 opacity-30"
         )}
+        width={20}
+        height={20}
+        numSquares={80}
+        maxOpacity={0.5}
       />
       
       {/* Technical Drawing Overlays */}
@@ -67,18 +85,26 @@ export default function HeroSection() {
             className="space-y-6"
           >
             {/* Main Heading with Typewriter */}
-            <TypewriterEffect
-              words={words}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
-              cursorClassName="bg-industrial-black"
-            />
-            
-            {/* STEROIDS with Cover Effect */}
-            <div className="text-4xl md:text-6xl lg:text-7xl font-bold font-stencil">
-              <Cover className="bg-industrial-black text-white">
-                STEROIDS
-              </Cover>
-            </div>
+            {!showCover ? (
+              <TypewriterEffect
+                words={words}
+                className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
+                cursorClassName="bg-industrial-black"
+              />
+            ) : (
+              <div className="space-y-4">
+                <TypewriterEffect
+                  words={words.slice(0, 3)}
+                  className="text-4xl md:text-6xl lg:text-7xl font-bold text-left"
+                  cursorClassName="bg-industrial-black"
+                />
+                <div className="text-4xl md:text-6xl lg:text-7xl font-bold font-stencil">
+                  <Cover className="bg-industrial-black text-white">
+                    STEROIDS
+                  </Cover>
+                </div>
+              </div>
+            )}
           </motion.div>
 
           {/* Supporting Text */}
@@ -88,27 +114,19 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="space-y-4"
           >
-            <p className="text-xl md:text-2xl text-industrial-medium font-stencil-display font-medium">
-              PRECISION • SPEED • QUALITY • INNOVATION
-            </p>
             <p className="text-lg text-industrial-medium max-w-2xl leading-relaxed">
-              Revolutionary CNC machining services that deliver precision parts faster than ever before. 
-              Experience the future of manufacturing with our cutting-edge technology.
+              because in the era of idea to app in mins Manufacturing shouldn't take weeks
             </p>
           </motion.div>
 
-          {/* CTA Buttons */}
+          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4"
           >
-            <button className="px-8 py-4 bg-industrial-black text-white font-stencil-display font-bold text-lg border-2 border-industrial-black hover:bg-transparent hover:text-industrial-black transition-all duration-300 shadow-lg hover:shadow-xl">
-              START PROJECT
-            </button>
-            <button className="px-8 py-4 bg-transparent text-industrial-black font-stencil-display font-bold text-lg border-2 border-industrial-black hover:bg-industrial-black hover:text-white transition-all duration-300">
-              VIEW CAPABILITIES
+            <button className="px-8 py-4 bg-industrial-black text-white font-stencil-display font-bold text-lg border-2 border-industrial-black transition-all duration-300 shadow-lg pill-cut-corner-filled">
+              GET STARTED
             </button>
           </motion.div>
         </div>
@@ -126,21 +144,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-industrial-medium rounded-full flex justify-center"
-        >
-          <div className="w-1 h-3 bg-industrial-medium rounded-full mt-2"></div>
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
