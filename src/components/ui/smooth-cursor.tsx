@@ -29,11 +29,11 @@ const DefaultCursorSVG: FC = () => {
       className="cursor-svg"
     >
       {/* Horizontal crosshair line */}
-      <line x1="2" y1="12" x2="22" y2="12" stroke="hsl(var(--industrial-white))" strokeWidth="2" />
+      <line x1="2" y1="12" x2="22" y2="12" stroke="hsl(var(--industrial-black))" strokeWidth="2" />
       {/* Vertical crosshair line */}
-      <line x1="12" y1="2" x2="12" y2="22" stroke="hsl(var(--industrial-white))" strokeWidth="2" />
+      <line x1="12" y1="2" x2="12" y2="22" stroke="hsl(var(--industrial-black))" strokeWidth="2" />
       {/* Center dot */}
-      <circle cx="12" cy="12" r="2" fill="hsl(var(--industrial-white))" />
+      <circle cx="12" cy="12" r="2" fill="hsl(var(--industrial-black))" />
     </svg>
   );
 };
