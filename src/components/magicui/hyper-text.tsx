@@ -10,6 +10,7 @@ interface HyperTextProps {
   animateOnLoad?: boolean;
   duration?: number;
   framerProps?: object;
+  triggerOnHover?: boolean;
 }
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -19,6 +20,7 @@ export const HyperText = ({
   className,
   animateOnLoad = true,
   duration = 800,
+  triggerOnHover = false,
   framerProps = {
     initial: { opacity: 0, y: -10 },
     animate: { opacity: 1, y: 0 },
@@ -69,7 +71,7 @@ export const HyperText = ({
         className,
       )}
       {...framerProps}
-      // Remove hover animation
+      onMouseEnter={triggerOnHover ? triggerAnimation : undefined}
     >
       {displayText.join("")}
     </motion.span>

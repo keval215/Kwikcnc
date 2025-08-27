@@ -43,11 +43,11 @@ export default function Navbar() {
         {/* Navigation Buttons */}
         <div className="flex items-center space-x-4">
           <button className="hidden sm:inline-flex px-6 py-3 bg-industrial-black text-white hover:bg-white hover:text-industrial-black hover:ring-2 hover:ring-industrial-black font-stencil-display font-bold transition-all duration-300 pill-cut-corner">
-            <HyperText>GET QUOTE</HyperText>
+            <HyperText animateOnLoad={false} triggerOnHover={true}>GET QUOTE</HyperText>
           </button>
           
           <button className="px-6 py-3 bg-industrial-black text-white hover:bg-white hover:text-industrial-black hover:ring-2 hover:ring-industrial-black font-stencil-display font-bold transition-all duration-300 pill-cut-corner">
-            <HyperText>JOIN KWIK</HyperText>
+            <HyperText animateOnLoad={false} triggerOnHover={true}>JOIN KWIK</HyperText>
           </button>
         </div>
 
