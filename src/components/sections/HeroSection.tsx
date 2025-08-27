@@ -99,7 +99,7 @@ export default function HeroSection() {
       {/* Interactive Grid Background */}
     <div className="fixed inset-0 z-0 w-screen h-screen">
         <InteractiveGridPattern
-      className="opacity-50 w-full h-full"
+          className="w-full h-full"
           width={40}
           height={40}
           squares={[80, 50]}

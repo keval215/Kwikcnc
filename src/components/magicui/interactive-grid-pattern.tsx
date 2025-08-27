@@ -42,10 +42,18 @@ export function InteractiveGridPattern({
 }: InteractiveGridPatternProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const prevCellRef = useRef<{ col: number; row: number } | null>(null);
 
   // Compute cols/rows to fill viewport (or use provided squares)
   const [colsRows, setColsRows] = useState<[number, number]>(squares);
   const [hoveredSquare, setHoveredSquare] = useState<number | null>(null);
+  // Trail intensities 0..1 per cell
+  const [intensities, setIntensities] = useState<Float32Array>(() => new Float32Array(squares[0] * squares[1]));
+  const animRef = useRef<number | null>(null);
+  const lastTsRef = useRef<number>(0);
+  // Exponential decay for smoother fade; half-life controls trail length
+  const HALF_LIFE_SEC = 0.5; // shorter trail so only previous cell remains briefly
+  const DECAY_LAMBDA = Math.log(2) / HALF_LIFE_SEC;
 
   const [cellSize, setCellSize] = useState<{ w: number; h: number }>({ w: width, h: height });
 
@@ -65,7 +73,9 @@ export function InteractiveGridPattern({
       const rows = Math.max(1, Math.round(vh / height));
       const fittedH = vh / rows;
       setCellSize({ w: fittedW, h: fittedH });
-      setColsRows([cols, rows]);
+  setColsRows([cols, rows]);
+  // Resize intensity buffer when grid changes
+  setIntensities(new Float32Array(cols * rows));
     };
 
     compute();
@@ -96,11 +106,62 @@ export function InteractiveGridPattern({
   const row = Math.min(vertical - 1, Math.max(0, Math.floor(vy / cellSize.h)));
       const idx = row * horizontal + col;
       setHoveredSquare(idx);
+      // Stamp only current cell and the previous cell (single neighbor behind)
+      setIntensities((old) => {
+        const arr = new Float32Array(old.length);
+        arr.set(old);
+        const w = horizontal;
+        const h = vertical;
+        const stamp = (cx: number, cy: number, weight: number) => {
+          if (cx < 0 || cy < 0 || cx >= w || cy >= h) return;
+          const i = cy * w + cx;
+          arr[i] = Math.max(arr[i], Math.min(1, weight));
+        };
+        const cx = idx % w;
+        const cy = Math.floor(idx / w);
+        // center - full black
+        stamp(cx, cy, 1.0);
+        // stamp previous cell (the one just behind cursor)
+        const lastCell = prevCellRef.current;
+        if (lastCell) {
+          stamp(lastCell.col, lastCell.row, 0.6);
+        }
+        // update prev for next movement
+        prevCellRef.current = { col: cx, row: cy };
+        return arr;
+      });
     };
 
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, [horizontal, vertical]);
+
+  // Decay animation loop
+  useEffect(() => {
+  const step = (ts: number) => {
+      const dt = Math.min(0.1, (ts - lastTsRef.current) / 1000 || 0); // cap dt for tab switches
+      lastTsRef.current = ts;
+      let changed = false;
+      setIntensities((prev) => {
+        const next = new Float32Array(prev.length);
+        for (let i = 0; i < prev.length; i++) {
+          const v = prev[i];
+          if (v > 0) {
+      const factor = Math.exp(-DECAY_LAMBDA * dt);
+      const nv = v * factor;
+            next[i] = nv;
+            if (nv !== v) changed = true;
+          } else next[i] = 0;
+        }
+        return changed ? next : prev;
+      });
+      animRef.current = requestAnimationFrame(step);
+    };
+    animRef.current = requestAnimationFrame(step);
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  }, []);
 
   return (
     <div
@@ -141,7 +202,7 @@ export function InteractiveGridPattern({
               stroke="currentColor"
               strokeWidth="1"
               vectorEffect="non-scaling-stroke"
-              className="text-industrial-medium/50"
+              className="text-industrial-medium/15"
             />
           </pattern>
         </defs>
@@ -153,11 +214,11 @@ export function InteractiveGridPattern({
           fill="url(#grid-pattern)"
         />
         
-        {/* Interactive squares */}
+        {/* Interactive squares with fading trail */}
         {Array.from({ length: horizontal * vertical }).map((_, index) => {
           const x = (index % horizontal) * width;
           const y = Math.floor(index / horizontal) * height;
-          const isHovered = hoveredSquare === index;
+          const a = intensities[index] ?? 0;
 
           return (
             <rect
@@ -166,8 +227,8 @@ export function InteractiveGridPattern({
               y={Math.floor(index / horizontal) * cellSize.h}
               width={cellSize.w}
               height={cellSize.h}
-              fill={isHovered ? "#000000" : "transparent"}
-              stroke={isHovered ? "#000000" : "transparent"}
+              fill={a > 0 ? `rgba(0,0,0,${Math.min(1, a)})` : "transparent"}
+              stroke={a > 0 ? `rgba(0,0,0,${Math.min(1, a)})` : "transparent"}
               className={cn(
                 "transition-all duration-200 ease-in-out",
                 squaresClassName
