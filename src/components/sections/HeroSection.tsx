@@ -4,6 +4,8 @@ import { motion } from "motion/react";
 import TypewriterText from "@/components/TypewriterText";
 import CNCPartViewer from "@/components/3d/CNCPartViewer";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
+import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 export default function HeroSection() {
@@ -95,6 +97,18 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Interactive Grid Background */}
+      <InteractiveGridPattern
+        className={cn(
+          "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+          "opacity-30"
+        )}
+        width={20}
+        height={20}
+        squares={[80, 80]}
+        squaresClassName="hover:fill-industrial-black/20 stroke-industrial-medium/20"
+      />
+      
       {/* Main Content */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">
         {/* Left Side - Text Content */}

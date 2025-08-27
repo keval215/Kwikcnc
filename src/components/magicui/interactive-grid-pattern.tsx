@@ -42,7 +42,7 @@ export function InteractiveGridPattern({
       width={width * horizontal}
       height={height * vertical}
       className={cn(
-        "absolute inset-0 h-full w-full",
+        "absolute inset-0 h-full w-full border border-gray-400/30",
         className,
       )}
       {...props}
@@ -58,7 +58,8 @@ export function InteractiveGridPattern({
             width={width}
             height={height}
             className={cn(
-              "stroke-gray-600/20 fill-transparent transition-all duration-300 ease-in-out hover:fill-gray-400/30 hover:stroke-gray-400/60",
+              "stroke-gray-400/30 transition-all duration-100 ease-in-out [&:not(:hover)]:duration-1000",
+              hoveredSquare === index ? "fill-gray-300/30" : "fill-transparent",
               squaresClassName,
             )}
             onMouseEnter={() => setHoveredSquare(index)}
