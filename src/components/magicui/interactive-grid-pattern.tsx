@@ -51,8 +51,8 @@ export function InteractiveGridPattern({
   const [intensities, setIntensities] = useState<Float32Array>(() => new Float32Array(squares[0] * squares[1]));
   const animRef = useRef<number | null>(null);
   const lastTsRef = useRef<number>(0);
-  // Exponential decay for smoother fade; half-life controls trail length
-  const HALF_LIFE_SEC = 0.5; // shorter trail so only previous cell remains briefly
+  // Exponential decay for smoother fade; half-life controls how long a cell stays bright
+  const HALF_LIFE_SEC = 0.7; // slower fade for 1-2 second trail
   const DECAY_LAMBDA = Math.log(2) / HALF_LIFE_SEC;
 
   const [cellSize, setCellSize] = useState<{ w: number; h: number }>({ w: width, h: height });
@@ -73,9 +73,9 @@ export function InteractiveGridPattern({
       const rows = Math.max(1, Math.round(vh / height));
       const fittedH = vh / rows;
       setCellSize({ w: fittedW, h: fittedH });
-  setColsRows([cols, rows]);
-  // Resize intensity buffer when grid changes
-  setIntensities(new Float32Array(cols * rows));
+      setColsRows([cols, rows]);
+      // Resize intensity buffer when grid changes
+      setIntensities(new Float32Array(cols * rows));
     };
 
     compute();
@@ -92,26 +92,27 @@ export function InteractiveGridPattern({
     const onMove = (e: MouseEvent) => {
       const svg = svgRef.current;
       if (!svg) return;
-  const rect = svg.getBoundingClientRect();
+      const rect = svg.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
         setHoveredSquare(null);
         return;
       }
-  // Map client pixels -> viewBox -> indices
-  const vx = (x / rect.width) * viewW;
-  const vy = (y / rect.height) * viewH;
-  const col = Math.min(horizontal - 1, Math.max(0, Math.floor(vx / cellSize.w)));
-  const row = Math.min(vertical - 1, Math.max(0, Math.floor(vy / cellSize.h)));
+      // Map client pixels -> viewBox -> indices
+      const vx = (x / rect.width) * viewW;
+      const vy = (y / rect.height) * viewH;
+      const col = Math.min(horizontal - 1, Math.max(0, Math.floor(vx / cellSize.w)));
+      const row = Math.min(vertical - 1, Math.max(0, Math.floor(vy / cellSize.h)));
       const idx = row * horizontal + col;
       setHoveredSquare(idx);
-      // Stamp only current cell and the previous cell (single neighbor behind)
-      setIntensities((old) => {
-        const arr = new Float32Array(old.length);
-        arr.set(old);
+      // Stamp intensity with 3-line hover effect
+      setIntensities((prev) => {
+        const arr = new Float32Array(prev.length);
+        arr.set(prev);
         const w = horizontal;
         const h = vertical;
+        // Stamp function for setting intensity
         const stamp = (cx: number, cy: number, weight: number) => {
           if (cx < 0 || cy < 0 || cx >= w || cy >= h) return;
           const i = cy * w + cx;
@@ -119,15 +120,8 @@ export function InteractiveGridPattern({
         };
         const cx = idx % w;
         const cy = Math.floor(idx / w);
-        // center - full black
+        // Only center cell - single grid line
         stamp(cx, cy, 1.0);
-        // stamp previous cell (the one just behind cursor)
-        const lastCell = prevCellRef.current;
-        if (lastCell) {
-          stamp(lastCell.col, lastCell.row, 0.6);
-        }
-        // update prev for next movement
-        prevCellRef.current = { col: cx, row: cy };
         return arr;
       });
     };
@@ -136,22 +130,24 @@ export function InteractiveGridPattern({
     return () => window.removeEventListener("mousemove", onMove);
   }, [horizontal, vertical]);
 
-  // Decay animation loop
+  // Decay animation loop with smoother interpolation
   useEffect(() => {
-  const step = (ts: number) => {
-      const dt = Math.min(0.1, (ts - lastTsRef.current) / 1000 || 0); // cap dt for tab switches
+    const step = (ts: number) => {
+      const dt = Math.min(0.033, (ts - lastTsRef.current) / 1000 || 0); // ~30fps cap for smoother animation
       lastTsRef.current = ts;
       let changed = false;
       setIntensities((prev) => {
         const next = new Float32Array(prev.length);
         for (let i = 0; i < prev.length; i++) {
           const v = prev[i];
-          if (v > 0) {
-      const factor = Math.exp(-DECAY_LAMBDA * dt);
-      const nv = v * factor;
+          if (v > 0.001) { // lower threshold for smoother fade
+            const factor = Math.exp(-DECAY_LAMBDA * dt);
+            const nv = v * factor;
             next[i] = nv;
-            if (nv !== v) changed = true;
-          } else next[i] = 0;
+            if (Math.abs(nv - v) > 0.001) changed = true; // more sensitive change detection
+          } else {
+            next[i] = 0;
+          }
         }
         return changed ? next : prev;
       });
@@ -161,7 +157,7 @@ export function InteractiveGridPattern({
     return () => {
       if (animRef.current) cancelAnimationFrame(animRef.current);
     };
-  }, []);
+  }, [DECAY_LAMBDA]);
 
   return (
     <div
@@ -184,61 +180,71 @@ export function InteractiveGridPattern({
         {...props}
       >
         <g shapeRendering="crispEdges">
-        <defs>
-          <pattern
-            id="grid-pattern"
-            x="0"
-            y="0"
-            width={cellSize.w}
-            height={cellSize.h}
-            patternUnits="userSpaceOnUse"
-          >
-            <rect
+          <defs>
+            <pattern
+              id="grid-pattern"
               x="0"
               y="0"
               width={cellSize.w}
               height={cellSize.h}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1"
-              vectorEffect="non-scaling-stroke"
-              className="text-industrial-medium/15"
-            />
-          </pattern>
-        </defs>
-        
-        {/* Base grid pattern */}
-        <rect
-          width="100%"
-          height="100%"
-          fill="url(#grid-pattern)"
-        />
-        
-        {/* Interactive squares with fading trail */}
-        {Array.from({ length: horizontal * vertical }).map((_, index) => {
-          const x = (index % horizontal) * width;
-          const y = Math.floor(index / horizontal) * height;
-          const a = intensities[index] ?? 0;
+              patternUnits="userSpaceOnUse"
+            >
+              <rect
+                x="0"
+                y="0"
+                width={cellSize.w}
+                height={cellSize.h}
+                fill="none"
+                stroke="rgb(156, 163, 175)"
+                strokeWidth="1"
+                vectorEffect="non-scaling-stroke"
+                opacity="0.3"
+              />
+            </pattern>
+          </defs>
 
-          return (
-            <rect
-              key={index}
-              x={(index % horizontal) * cellSize.w}
-              y={Math.floor(index / horizontal) * cellSize.h}
-              width={cellSize.w}
-              height={cellSize.h}
-              fill={a > 0 ? `rgba(0,0,0,${Math.min(1, a)})` : "transparent"}
-              stroke={a > 0 ? `rgba(0,0,0,${Math.min(1, a)})` : "transparent"}
-              className={cn(
-                "transition-all duration-200 ease-in-out",
-                squaresClassName
-              )}
-              // Explicitly enable pointer events on the rects only. Since we track globally,
-              // this is mainly for correct cursor feedback when the grid is on top.
-              style={{ pointerEvents: "auto" }}
-            />
-          );
-        })}
+          {/* Grey background with reduced opacity */}
+          <rect
+            width="100%"
+            height="100%"
+            fill="rgb(249, 250, 251)"
+            fillOpacity="0.5"
+          />
+
+          {/* Base grid pattern */}
+          <rect
+            width="100%"
+            height="100%"
+            fill="url(#grid-pattern)"
+          />
+
+          {/* Interactive squares with fading trail */}
+          {Array.from({ length: horizontal * vertical }).map((_, index) => {
+            const x = (index % horizontal) * width;
+            const y = Math.floor(index / horizontal) * height;
+            const a = intensities[index] ?? 0;
+
+            return (
+              <rect
+                key={index}
+                x={(index % horizontal) * cellSize.w}
+                y={Math.floor(index / horizontal) * cellSize.h}
+                width={cellSize.w}
+                height={cellSize.h}
+                fill={a > 0 ? `rgb(0, 0, 0)` : "transparent"}
+                stroke={a > 0 ? `rgb(0, 0, 0)` : "transparent"}
+                fillOpacity={a > 0 ? Math.min(0.9, a * 0.9) : 0}
+                strokeOpacity={a > 0 ? Math.min(1.0, a * 1.0) : 0}
+                className={cn(
+                  "transition-opacity duration-100 ease-out",
+                  squaresClassName
+                )}
+                // Explicitly enable pointer events on the rects only. Since we track globally,
+                // this is mainly for correct cursor feedback when the grid is on top.
+                style={{ pointerEvents: "auto" }}
+              />
+            );
+          })}
         </g>
       </svg>
     </div>
