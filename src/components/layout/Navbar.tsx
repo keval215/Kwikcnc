@@ -9,11 +9,11 @@ export default function Navbar() {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 h-20 flex items-center"
+      className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center"
     >
       {/* Navbar Container with fixed greyish background */}
-      <div className="max-w-7xl mx-auto px-4 w-full">
-        <div className="flex items-center justify-between px-6 py-3 rounded-2xl bg-gray-100/95 backdrop-blur-md shadow-lg border border-gray-300/50">
+      <div className="max-w-4xl mx-auto px-4 w-full">
+        <div className="flex items-center justify-between px-6 py-2 rounded-2xl bg-gray-200/90 backdrop-blur-md shadow-lg border border-gray-400/40">
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}

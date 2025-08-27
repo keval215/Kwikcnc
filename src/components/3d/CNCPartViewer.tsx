@@ -122,5 +122,5 @@ const CADModelViewer = () => {
     </motion.div>
   );
 };
-
+// be carefull while playing with the cad viewer its difficult and very 
 export default CADModelViewer;

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 export default function HeroSection() {
-  
+
   const words = [
     {
       text: "CNC",
@@ -95,9 +95,9 @@ export default function HeroSection() {
   const [showSupportingText, setShowSupportingText] = useState(false);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-start justify-center overflow-hidden pt-2">
       {/* Interactive Grid Background */}
-    <div className="fixed inset-0 z-0 w-screen h-screen">
+      <div className="fixed inset-0 z-0 w-screen h-screen">
         <InteractiveGridPattern
           className="w-full h-full"
           width={40}
@@ -106,7 +106,7 @@ export default function HeroSection() {
           squaresClassName="stroke-industrial-medium/50 hover:fill-black hover:stroke-black transition-all duration-200"
         />
       </div>
-      
+
       {/* Main Content */}
       <div className="relative z-20 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full pl-6 pr-0 pt-2">
         {/* Left Side - Text Content */}
@@ -150,7 +150,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            <ShimmerButton 
+            <ShimmerButton
               className="px-8 py-4 bg-industrial-black text-white font-stencil-display font-bold text-lg border-2 border-industrial-black transition-all duration-300 shadow-lg pill-cut-corner-filled"
               shimmerColor="#ffffff"
               shimmerDuration="3s"
@@ -162,12 +162,12 @@ export default function HeroSection() {
         </div>
 
         {/* Right Side - 3D Viewer */}
-        <div className="lg:col-span-2 flex items-center justify-end">
+        <div className="lg:col-span-2 flex items-end justify-end pb-5">
           <motion.div
             initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
             animate={{ opacity: 1, scale: 1, rotateY: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="w-full"
+            className="w-full max-w-lg mt-16"
           >
             <CNCPartViewer />
           </motion.div>
