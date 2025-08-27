@@ -12,7 +12,7 @@ const MechanicalPart = () => {
 
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3;
     }
   });
 
@@ -75,12 +75,12 @@ const CADModelViewer = () => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, delay: 0.4 }}
-      className="cad-viewer-frame h-[600px] w-full relative overflow-hidden ml-auto"
+      className="cad-viewer-frame h-[600px] w-[600px] relative overflow-hidden ml-auto"
       style={{
         minHeight: '600px',
         maxHeight: '600px',
-        minWidth: '100%',
-        maxWidth: '100%',
+        minWidth: '600px',
+        maxWidth: '600px',
         marginRight: '0'
       }}
     >
@@ -96,7 +96,7 @@ const CADModelViewer = () => {
         gl={{ antialias: true, alpha: true }}
         resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
       >
-        <PerspectiveCamera makeDefault position={[5, 3, 5]} fov={50} />
+        <PerspectiveCamera makeDefault position={[4, 2.5, 4]} fov={50} />
 
         {/* Lighting setup */}
         <ambientLight intensity={0.4} />
@@ -110,8 +110,8 @@ const CADModelViewer = () => {
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
-            minDistance={3}
-            maxDistance={12}
+            minDistance={2}
+            maxDistance={8}
             autoRotate={false}
             autoRotateSpeed={0.5}
           />

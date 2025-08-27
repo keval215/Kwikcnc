@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import TypewriterText from "@/components/TypewriterText";
 import CNCPartViewer from "@/components/3d/CNCPartViewer";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { RulerCarousel } from "@/components/ui/ruler-carousel";
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -137,8 +138,8 @@ export default function HeroSection() {
               <div className="opacity-90">
                 <TypewriterText
                   text="Because in the era of idea to app in mins Manufacturing shouldn't take weeks"
-                  delay={20}
-                  className="text-base md:text-lg lg:text-xl text-left font-stencil"
+                  delay={50}
+                  className="text-lg md:text-xl lg:text-2xl text-left font-stencil"
                 />
               </div>
             )}
@@ -172,6 +173,29 @@ export default function HeroSection() {
             <CNCPartViewer />
           </motion.div>
         </div>
+      </div>
+
+      {/* Full Width Ruler Carousel - Below Main Content */}
+      <div className="absolute bottom-20 left-0 right-0 z-30 w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+        >
+          <RulerCarousel
+            originalItems={[
+              { id: 1, title: "IDEA" },
+              { id: 2, title: "TO" },
+              { id: 3, title: "PARTS" },
+              { id: 4, title: "WO'NT" },
+              { id: 5, title: "TAKE" },
+              { id: 6, title: "WEEKS" },
+              { id: 7, title: "KWIKCNC" },
+            ]}
+            autoRotate={true}
+            autoRotateInterval={2000}
+          />
+        </motion.div>
       </div>
     </section>
   );
