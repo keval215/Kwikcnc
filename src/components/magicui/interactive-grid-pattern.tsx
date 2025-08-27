@@ -51,8 +51,9 @@ export function InteractiveGridPattern({
   const [intensities, setIntensities] = useState<Float32Array>(() => new Float32Array(squares[0] * squares[1]));
   const animRef = useRef<number | null>(null);
   const lastTsRef = useRef<number>(0);
-  // Exponential decay for smoother fade; half-life controls how long a cell stays bright
-  const HALF_LIFE_SEC = 0.7; // slower fade for 1-2 second trail
+  
+  // Smoother animation parameters with shorter trail
+  const HALF_LIFE_SEC = 0.35; // Shorter fade but still smooth (was 0.7, then 1.2)
   const DECAY_LAMBDA = Math.log(2) / HALF_LIFE_SEC;
 
   const [cellSize, setCellSize] = useState<{ w: number; h: number }>({ w: width, h: height });
@@ -133,18 +134,18 @@ export function InteractiveGridPattern({
   // Decay animation loop with smoother interpolation
   useEffect(() => {
     const step = (ts: number) => {
-      const dt = Math.min(0.033, (ts - lastTsRef.current) / 1000 || 0); // ~30fps cap for smoother animation
+      const dt = Math.min(0.016, (ts - lastTsRef.current) / 1000 || 0); // 60fps cap for ultra-smooth animation (was 0.033)
       lastTsRef.current = ts;
       let changed = false;
       setIntensities((prev) => {
         const next = new Float32Array(prev.length);
         for (let i = 0; i < prev.length; i++) {
           const v = prev[i];
-          if (v > 0.001) { // lower threshold for smoother fade
+          if (v > 0.0005) { // Even lower threshold for ultra-smooth fade (was 0.001)
             const factor = Math.exp(-DECAY_LAMBDA * dt);
             const nv = v * factor;
             next[i] = nv;
-            if (Math.abs(nv - v) > 0.001) changed = true; // more sensitive change detection
+            if (Math.abs(nv - v) > 0.0005) changed = true; // More sensitive change detection (was 0.001)
           } else {
             next[i] = 0;
           }
@@ -236,7 +237,7 @@ export function InteractiveGridPattern({
                 fillOpacity={a > 0 ? Math.min(0.9, a * 0.9) : 0}
                 strokeOpacity={a > 0 ? Math.min(1.0, a * 1.0) : 0}
                 className={cn(
-                  "transition-opacity duration-100 ease-out",
+                  "transition-opacity duration-200 ease-out", // Longer CSS transition for smoother effect (was duration-100)
                   squaresClassName
                 )}
                 // Explicitly enable pointer events on the rects only. Since we track globally,
