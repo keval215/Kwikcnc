@@ -97,16 +97,13 @@ export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Interactive Grid Background */}
-      <div className="absolute inset-0 z-0">
+    <div className="fixed inset-0 z-0 w-screen h-screen">
         <InteractiveGridPattern
-          className={cn(
-            "opacity-40",
-            "[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
-          )}
-          width={30}
-          height={30}
-          squares={[60, 40]}
-          squaresClassName="stroke-industrial-medium/40 hover:fill-industrial-black/30 hover:stroke-industrial-black/60 transition-all duration-200"
+      className="opacity-50 w-full h-full"
+          width={40}
+          height={40}
+          squares={[80, 50]}
+          squaresClassName="stroke-industrial-medium/50 hover:fill-black hover:stroke-black transition-all duration-200"
         />
       </div>
       

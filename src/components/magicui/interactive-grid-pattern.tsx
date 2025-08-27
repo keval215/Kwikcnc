@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * InteractiveGridPattern is a component that renders a grid pattern with interactive squares.
@@ -18,6 +18,11 @@ interface InteractiveGridPatternProps extends React.SVGProps<SVGSVGElement> {
   squares?: [number, number]; // [horizontal, vertical]
   className?: string;
   squaresClassName?: string;
+  /**
+   * When true, the component auto-fits the grid to the viewport so it covers the whole page
+   * and aligns the grid lines to the edges. Ignores `squares` prop.
+   */
+  autoFit?: boolean;
 }
 
 /**
@@ -32,38 +37,111 @@ export function InteractiveGridPattern({
   squares = [24, 24],
   className,
   squaresClassName,
+  autoFit = true,
   ...props
 }: InteractiveGridPatternProps) {
-  const [horizontal, vertical] = squares;
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Compute cols/rows to fill viewport (or use provided squares)
+  const [colsRows, setColsRows] = useState<[number, number]>(squares);
   const [hoveredSquare, setHoveredSquare] = useState<number | null>(null);
 
+  const [cellSize, setCellSize] = useState<{ w: number; h: number }>({ w: width, h: height });
+
+  useEffect(() => {
+    if (!autoFit) {
+      setColsRows(squares);
+      setCellSize({ w: width, h: height });
+      return;
+    }
+
+    const compute = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      // Fit cell size so cols/rows are integers and the grid aligns with edges
+      const cols = Math.max(1, Math.round(vw / width));
+      const fittedW = vw / cols;
+      const rows = Math.max(1, Math.round(vh / height));
+      const fittedH = vh / rows;
+      setCellSize({ w: fittedW, h: fittedH });
+      setColsRows([cols, rows]);
+    };
+
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, [autoFit, width, height, squares]);
+
+  const [horizontal, vertical] = colsRows;
+  const viewW = useMemo(() => cellSize.w * horizontal, [cellSize.w, horizontal]);
+  const viewH = useMemo(() => cellSize.h * vertical, [cellSize.h, vertical]);
+
+  // Track mouse globally so hover works even when the grid is behind content
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const svg = svgRef.current;
+      if (!svg) return;
+  const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        setHoveredSquare(null);
+        return;
+      }
+  // Map client pixels -> viewBox -> indices
+  const vx = (x / rect.width) * viewW;
+  const vy = (y / rect.height) * viewH;
+  const col = Math.min(horizontal - 1, Math.max(0, Math.floor(vx / cellSize.w)));
+  const row = Math.min(vertical - 1, Math.max(0, Math.floor(vy / cellSize.h)));
+      const idx = row * horizontal + col;
+      setHoveredSquare(idx);
+    };
+
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [horizontal, vertical]);
+
   return (
-    <div className={cn("absolute inset-0 h-full w-full", className)}>
+    <div
+      ref={containerRef}
+      className={cn(
+        // Keep it positioned but don't block interactions above
+        "absolute inset-0 h-full w-full pointer-events-none",
+        className
+      )}
+    >
       <svg
+        ref={svgRef}
         width="100%"
         height="100%"
-        viewBox={`0 0 ${width * horizontal} ${height * vertical}`}
+        viewBox={`0 0 ${viewW} ${viewH}`}
         className="h-full w-full"
+        preserveAspectRatio="none"
+        // Allow pointer to pass through unless we specifically set it on shapes
+        style={{ pointerEvents: "none" }}
         {...props}
       >
+        <g shapeRendering="crispEdges">
         <defs>
           <pattern
             id="grid-pattern"
             x="0"
             y="0"
-            width={width}
-            height={height}
+            width={cellSize.w}
+            height={cellSize.h}
             patternUnits="userSpaceOnUse"
           >
             <rect
               x="0"
               y="0"
-              width={width}
-              height={height}
+              width={cellSize.w}
+              height={cellSize.h}
               fill="none"
               stroke="currentColor"
               strokeWidth="1"
-              className="text-industrial-medium/30"
+              vectorEffect="non-scaling-stroke"
+              className="text-industrial-medium/50"
             />
           </pattern>
         </defs>
@@ -79,23 +157,28 @@ export function InteractiveGridPattern({
         {Array.from({ length: horizontal * vertical }).map((_, index) => {
           const x = (index % horizontal) * width;
           const y = Math.floor(index / horizontal) * height;
+          const isHovered = hoveredSquare === index;
+
           return (
             <rect
               key={index}
-              x={x}
-              y={y}
-              width={width}
-              height={height}
+              x={(index % horizontal) * cellSize.w}
+              y={Math.floor(index / horizontal) * cellSize.h}
+              width={cellSize.w}
+              height={cellSize.h}
+              fill={isHovered ? "#000000" : "transparent"}
+              stroke={isHovered ? "#000000" : "transparent"}
               className={cn(
-                "fill-transparent stroke-transparent transition-all duration-200 ease-in-out cursor-pointer",
-                hoveredSquare === index ? "fill-current" : "fill-transparent",
-                squaresClassName,
+                "transition-all duration-200 ease-in-out",
+                squaresClassName
               )}
-              onMouseEnter={() => setHoveredSquare(index)}
-              onMouseLeave={() => setHoveredSquare(null)}
+              // Explicitly enable pointer events on the rects only. Since we track globally,
+              // this is mainly for correct cursor feedback when the grid is on top.
+              style={{ pointerEvents: "auto" }}
             />
           );
         })}
+        </g>
       </svg>
     </div>
   );
