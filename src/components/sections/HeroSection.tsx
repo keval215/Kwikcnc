@@ -94,7 +94,7 @@ export default function HeroSection() {
   const [showSupportingText, setShowSupportingText] = useState(false);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(210_14%_77%)]/20 dark:bg-industrial-black/20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Main Content */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">
         {/* Left Side - Text Content */}
