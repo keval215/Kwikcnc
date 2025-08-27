@@ -108,7 +108,7 @@ export default function HeroSection() {
       </div>
       
       {/* Main Content */}
-      <div className="relative z-20 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">
+      <div className="relative z-20 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full pl-6 pr-0 pt-2">
         {/* Left Side - Text Content */}
         <div className="lg:col-span-3 flex flex-col justify-center space-y-8">
           <motion.div
@@ -162,12 +162,12 @@ export default function HeroSection() {
         </div>
 
         {/* Right Side - 3D Viewer */}
-        <div className="lg:col-span-2 flex items-center justify-center">
+        <div className="lg:col-span-2 flex items-center justify-end">
           <motion.div
             initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
             animate={{ opacity: 1, scale: 1, rotateY: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="w-full max-w-lg"
+            className="w-full"
           >
             <CNCPartViewer />
           </motion.div>
