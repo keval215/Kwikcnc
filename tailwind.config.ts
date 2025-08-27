@@ -94,11 +94,47 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'spin-around': {
+					'0%': {
+						transform: 'translateZ(0) rotate(0)',
+					},
+					'15%, 35%': {
+						transform: 'translateZ(0) rotate(90deg)',
+					},
+					'65%, 85%': {
+						transform: 'translateZ(0) rotate(270deg)',
+					},
+					'100%': {
+						transform: 'translateZ(0) rotate(360deg)',
+					},
+				},
+				'shimmer-slide': {
+					to: {
+						transform: 'translate(calc(100cqw - 100%), 0)',
+					},
+				},
+				'cell-ripple': {
+					'0%': {
+						opacity: '0.4',
+						transform: 'scale(1)',
+					},
+					'50%': {
+						opacity: '0.8',
+						transform: 'scale(1.1)',
+					},
+					'100%': {
+						opacity: '0.4',
+						transform: 'scale(1)',
+					},
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'shimmer-slide': 'shimmer-slide var(--speed) ease-in-out infinite alternate',
+				'spin-around': 'spin-around calc(var(--speed) * 2) infinite linear',
+				'cell-ripple': 'cell-ripple var(--duration, 200ms) ease-out var(--delay, 0ms)',
 			}
 		}
 	},

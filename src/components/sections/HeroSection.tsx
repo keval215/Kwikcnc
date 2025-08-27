@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import TypewriterText from "@/components/TypewriterText";
 import CNCPartViewer from "@/components/3d/CNCPartViewer";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { useState, useEffect } from "react";
 
 export default function HeroSection() {
@@ -93,7 +94,7 @@ export default function HeroSection() {
   const [showSupportingText, setShowSupportingText] = useState(false);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(210_14%_77%)] dark:bg-industrial-black">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(210_14%_77%)]/50 dark:bg-industrial-black/50">
       {/* Main Content */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">
         {/* Left Side - Text Content */}
@@ -137,9 +138,14 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            <button className="px-8 py-4 bg-industrial-black text-white font-stencil-display font-bold text-lg border-2 border-industrial-black transition-all duration-300 shadow-lg pill-cut-corner-filled">
+            <ShimmerButton 
+              className="px-8 py-4 bg-industrial-black text-white font-stencil-display font-bold text-lg border-2 border-industrial-black transition-all duration-300 shadow-lg pill-cut-corner-filled"
+              shimmerColor="#ffffff"
+              shimmerDuration="3s"
+              borderRadius="8px"
+            >
               GET STARTED
-            </button>
+            </ShimmerButton>
           </motion.div>
         </div>
 
