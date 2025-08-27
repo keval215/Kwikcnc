@@ -116,16 +116,19 @@ export default {
 				},
 				'cell-ripple': {
 					'0%': {
-						opacity: '0.4',
+						opacity: '0.3',
 						transform: 'scale(1)',
+						backgroundColor: 'var(--cell-fill-color)',
 					},
 					'50%': {
 						opacity: '0.8',
-						transform: 'scale(1.1)',
+						transform: 'scale(1.2)',
+						backgroundColor: 'rgba(59, 130, 246, 0.5)',
 					},
 					'100%': {
-						opacity: '0.4',
+						opacity: '0.3',
 						transform: 'scale(1)',
+						backgroundColor: 'var(--cell-fill-color)',
 					},
 				},
 			},

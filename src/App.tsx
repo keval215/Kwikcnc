@@ -13,8 +13,8 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <div className="relative min-h-screen">
-        <BackgroundRippleEffect />
+      <BackgroundRippleEffect />
+      <div className="relative min-h-screen z-10">
         <SmoothCursor />
         <Toaster />
         <Sonner />

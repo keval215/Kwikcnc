@@ -22,18 +22,18 @@ export const BackgroundRippleEffect = ({
     <div
       ref={ref}
       className={cn(
-        "absolute inset-0 h-full w-full",
-        "[--cell-border-color:var(--color-neutral-300)] [--cell-fill-color:var(--color-neutral-100)] [--cell-shadow-color:var(--color-neutral-500)]",
-        "dark:[--cell-border-color:var(--color-neutral-700)] dark:[--cell-fill-color:var(--color-neutral-900)] dark:[--cell-shadow-color:var(--color-neutral-800)]",
+        "fixed inset-0 h-screen w-screen z-0",
+        "[--cell-border-color:rgba(63,63,70,0.3)] [--cell-fill-color:rgba(244,244,245,0.1)] [--cell-shadow-color:rgba(63,63,70,0.2)]",
+        "dark:[--cell-border-color:rgba(161,161,170,0.3)] dark:[--cell-fill-color:rgba(39,39,42,0.1)] dark:[--cell-shadow-color:rgba(161,161,170,0.2)]",
       )}
     >
-      <div className="relative h-auto w-auto overflow-hidden">
+      <div className="relative h-full w-full overflow-hidden">
         <div className="pointer-events-none absolute inset-0 z-[2] h-full w-full overflow-hidden" />
         <DivGrid
           key={`base-${rippleKey}`}
-          className="mask-radial-from-20% mask-radial-at-top opacity-600"
-          rows={rows}
-          cols={cols}
+          className="opacity-100"
+          rows={Math.ceil(window.innerHeight / cellSize) + 2}
+          cols={Math.ceil(window.innerWidth / cellSize) + 2}
           cellSize={cellSize}
           borderColor="var(--cell-border-color)"
           fillColor="var(--cell-fill-color)"
@@ -86,13 +86,15 @@ const DivGrid = ({
     display: "grid",
     gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
     gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
-    width: cols * cellSize,
-    height: rows * cellSize,
-    marginInline: "auto",
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
   };
 
   return (
-    <div className={cn("relative z-[3]", className)} style={gridStyle}>
+    <div className={cn("relative z-[1] pointer-events-auto", className)} style={gridStyle}>
       {cells.map((idx) => {
         const rowIdx = Math.floor(idx / cols);
         const colIdx = idx % cols;
@@ -113,8 +115,8 @@ const DivGrid = ({
           <div
             key={idx}
             className={cn(
-              "cell relative border-[0.5px] opacity-40 transition-opacity duration-150 will-change-transform hover:opacity-80 dark:shadow-[0px_0px_40px_1px_var(--cell-shadow-color)_inset]",
-              clickedCell && "animate-cell-ripple [animation-fill-mode:none]",
+              "cell relative border-[0.5px] opacity-30 transition-all duration-300 will-change-transform hover:opacity-60 hover:scale-105 cursor-pointer",
+              clickedCell && distance <= 5 && "animate-cell-ripple [animation-fill-mode:forwards]",
               !interactive && "pointer-events-none",
             )}
             style={{
