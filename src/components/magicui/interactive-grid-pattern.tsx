@@ -38,35 +38,65 @@ export function InteractiveGridPattern({
   const [hoveredSquare, setHoveredSquare] = useState<number | null>(null);
 
   return (
-    <svg
-      width={width * horizontal}
-      height={height * vertical}
-      className={cn(
-        "absolute inset-0 h-full w-full border border-gray-400/30",
-        className,
-      )}
-      {...props}
-    >
-      {Array.from({ length: horizontal * vertical }).map((_, index) => {
-        const x = (index % horizontal) * width;
-        const y = Math.floor(index / horizontal) * height;
-        return (
-          <rect
-            key={index}
-            x={x}
-            y={y}
+    <div className={cn("absolute inset-0 h-full w-full", className)}>
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${width * horizontal} ${height * vertical}`}
+        className="h-full w-full"
+        {...props}
+      >
+        <defs>
+          <pattern
+            id="grid-pattern"
+            x="0"
+            y="0"
             width={width}
             height={height}
-            className={cn(
-              "stroke-gray-400/30 transition-all duration-100 ease-in-out [&:not(:hover)]:duration-1000",
-              hoveredSquare === index ? "fill-gray-300/30" : "fill-transparent",
-              squaresClassName,
-            )}
-            onMouseEnter={() => setHoveredSquare(index)}
-            onMouseLeave={() => setHoveredSquare(null)}
-          />
-        );
-      })}
-    </svg>
+            patternUnits="userSpaceOnUse"
+          >
+            <rect
+              x="0"
+              y="0"
+              width={width}
+              height={height}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              className="text-industrial-medium/30"
+            />
+          </pattern>
+        </defs>
+        
+        {/* Base grid pattern */}
+        <rect
+          width="100%"
+          height="100%"
+          fill="url(#grid-pattern)"
+        />
+        
+        {/* Interactive squares */}
+        {Array.from({ length: horizontal * vertical }).map((_, index) => {
+          const x = (index % horizontal) * width;
+          const y = Math.floor(index / horizontal) * height;
+          return (
+            <rect
+              key={index}
+              x={x}
+              y={y}
+              width={width}
+              height={height}
+              className={cn(
+                "fill-transparent stroke-transparent transition-all duration-200 ease-in-out cursor-pointer",
+                hoveredSquare === index ? "fill-current" : "fill-transparent",
+                squaresClassName,
+              )}
+              onMouseEnter={() => setHoveredSquare(index)}
+              onMouseLeave={() => setHoveredSquare(null)}
+            />
+          );
+        })}
+      </svg>
+    </div>
   );
 }
