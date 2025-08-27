@@ -4,10 +4,11 @@ import { motion } from "motion/react";
 import TypewriterText from "@/components/TypewriterText";
 import CNCPartViewer from "@/components/3d/CNCPartViewer";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
+import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 export default function HeroSection() {
-  // showCover removed
   
   const words = [
     {
@@ -95,8 +96,22 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Interactive Grid Background */}
+      <div className="absolute inset-0 z-0">
+        <InteractiveGridPattern
+          className={cn(
+            "opacity-40",
+            "[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
+          )}
+          width={30}
+          height={30}
+          squares={[60, 40]}
+          squaresClassName="stroke-industrial-medium/40 hover:fill-industrial-black/30 hover:stroke-industrial-black/60 transition-all duration-200"
+        />
+      </div>
+      
       {/* Main Content */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">
+      <div className="relative z-20 grid grid-cols-1 lg:grid-cols-5 gap-8 w-full max-w-7xl mx-auto px-6 pt-20">
         {/* Left Side - Text Content */}
         <div className="lg:col-span-3 flex flex-col justify-center space-y-8">
           <motion.div
