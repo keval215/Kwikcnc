@@ -208,9 +208,9 @@ export function RulerCarousel({
                 ? { duration: 0 }
                 : {
                     type: "spring",
-                    stiffness: 260,
-                    damping: 20,
-                    mass: 1,
+                    stiffness: 300,
+                    damping: 30,
+                    mass: 0.8,
                   }
             }
           >
@@ -227,15 +227,16 @@ export function RulerCarousel({
                   }`}
                   animate={{
                     scale: isActive ? 1 : 0.75,
-                    opacity: isActive ? 1 : 0.4,
+                    opacity: isActive ? 1 : 0.7,
                   }}
                   transition={
                     isResetting
                       ? { duration: 0 }
                       : {
                           type: "spring",
-                          stiffness: 400,
-                          damping: 25,
+                          stiffness: 350,
+                          damping: 35,
+                          mass: 0.7,
                         }
                   }
                   style={{

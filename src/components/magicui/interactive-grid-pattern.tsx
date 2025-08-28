@@ -49,8 +49,13 @@ export function InteractiveGridPattern({
   const [hoveredSquare, setHoveredSquare] = useState<number | null>(null);
   // Trail intensities 0..1 per cell
   const [intensities, setIntensities] = useState<Float32Array>(() => new Float32Array(squares[0] * squares[1]));
+  // Random color animation states
+  const [randomColors, setRandomColors] = useState<string[]>(() => new Array(squares[0] * squares[1]).fill('rgb(0, 0, 0)'));
+  const [randomIntensities, setRandomIntensities] = useState<Float32Array>(() => new Float32Array(squares[0] * squares[1]));
+
   const animRef = useRef<number | null>(null);
   const lastTsRef = useRef<number>(0);
+  const randomAnimRef = useRef<number | null>(null);
   
   // Smoother animation parameters with shorter trail
   const HALF_LIFE_SEC = 0.35; // Shorter fade but still smooth (was 0.7, then 1.2)
@@ -77,6 +82,8 @@ export function InteractiveGridPattern({
       setColsRows([cols, rows]);
       // Resize intensity buffer when grid changes
       setIntensities(new Float32Array(cols * rows));
+      setRandomColors(new Array(cols * rows).fill('rgb(0, 0, 0)'));
+      setRandomIntensities(new Float32Array(cols * rows));
     };
 
     compute();
@@ -160,6 +167,105 @@ export function InteractiveGridPattern({
     };
   }, [DECAY_LAMBDA]);
 
+  // Random color animation effect (both corners)
+  useEffect(() => {
+    const colors = [
+      'rgb(0, 0, 0)',           // Black
+      'rgb(55, 65, 81)',        // Gray-700 (darker)
+      'rgb(31, 41, 55)',        // Gray-800 (darker)
+      'rgb(17, 24, 39)',        // Gray-900 (even darker)
+      'rgb(75, 85, 99)',        // Gray-600
+      'rgb(107, 114, 128)',     // Gray-500
+    ];
+
+    const randomStep = () => {
+      // Define corner areas (approximately 25% of width and height each)
+      const cornerCols = Math.max(1, Math.floor(horizontal * 0.25));
+      const cornerRows = Math.max(1, Math.floor(vertical * 0.25));
+      
+      // Randomly select 4-10 cells from both corner areas (minimum 4)
+      const numCells = Math.floor(Math.random() * 7) + 4;
+      const selectedCells = new Set<number>();
+      
+      while (selectedCells.size < numCells) {
+        // Randomly choose between top-left and right-bottom corner
+        const isTopLeft = Math.random() < 0.5;
+        
+        if (isTopLeft) {
+          // Top-left corner
+          const col = Math.floor(Math.random() * cornerCols);
+          const row = Math.floor(Math.random() * cornerRows);
+          const index = row * horizontal + col;
+          selectedCells.add(index);
+        } else {
+          // Right-bottom corner (just above the stripe area, not in the stripe)
+          const col = Math.floor(Math.random() * cornerCols) + (horizontal - cornerCols);
+          // Position it above the stripe band by leaving some margin from the bottom
+          const stripeMargin = Math.floor(vertical * 0.25); // Leave 25% margin from bottom for stripe
+          const row = Math.floor(Math.random() * cornerRows) + (vertical - cornerRows - stripeMargin);
+          const index = row * horizontal + col;
+          selectedCells.add(index);
+        }
+      }
+
+      setRandomColors(prev => {
+        const newColors = [...prev];
+        selectedCells.forEach(index => {
+          newColors[index] = colors[Math.floor(Math.random() * colors.length)];
+        });
+        return newColors;
+      });
+
+      setRandomIntensities(prev => {
+        const newIntensities = new Float32Array(prev.length);
+        newIntensities.set(prev);
+        selectedCells.forEach(index => {
+          newIntensities[index] = 0.8 + Math.random() * 0.2; // Random intensity between 0.8-1.0 (higher intensity)
+        });
+        return newIntensities;
+      });
+
+      // Schedule next random animation
+      const nextDelay = 800 + Math.random() * 1200; // Random interval between 0.8-2.0 seconds
+      randomAnimRef.current = setTimeout(randomStep, nextDelay);
+    };
+
+    // Start the random animation
+    randomAnimRef.current = setTimeout(randomStep, 1000);
+
+    return () => {
+      if (randomAnimRef.current) {
+        clearTimeout(randomAnimRef.current);
+      }
+    };
+  }, [horizontal, vertical]);
+
+  // Decay random intensities
+  useEffect(() => {
+    const decayStep = () => {
+      setRandomIntensities(prev => {
+        const next = new Float32Array(prev.length);
+        let changed = false;
+        for (let i = 0; i < prev.length; i++) {
+          const v = prev[i];
+          if (v > 0.01) {
+            const nv = v * 0.96; // Slightly faster decay to make room for new intense animations
+            next[i] = nv;
+            changed = true;
+          } else {
+            next[i] = 0;
+          }
+        }
+        return changed ? next : prev;
+      });
+    };
+
+    const interval = setInterval(decayStep, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+
+
   return (
     <div
       ref={containerRef}
@@ -219,11 +325,25 @@ export function InteractiveGridPattern({
             fill="url(#grid-pattern)"
           />
 
-          {/* Interactive squares with fading trail */}
+          {/* Interactive squares with fading trail and random colors */}
           {Array.from({ length: horizontal * vertical }).map((_, index) => {
             const x = (index % horizontal) * width;
             const y = Math.floor(index / horizontal) * height;
-            const a = intensities[index] ?? 0;
+            const hoverIntensity = intensities[index] ?? 0;
+            const randomIntensity = randomIntensities[index] ?? 0;
+            const randomColor = randomColors[index] ?? 'rgb(0, 0, 0)';
+            
+            // Priority: hover > random animation
+            let finalIntensity = 0;
+            let finalColor = 'rgb(0, 0, 0)';
+            
+            if (hoverIntensity > 0) {
+              finalIntensity = hoverIntensity;
+              finalColor = 'rgb(0, 0, 0)';
+            } else if (randomIntensity > 0) {
+              finalIntensity = randomIntensity;
+              finalColor = randomColor;
+            }
 
             return (
               <rect
@@ -232,12 +352,12 @@ export function InteractiveGridPattern({
                 y={Math.floor(index / horizontal) * cellSize.h}
                 width={cellSize.w}
                 height={cellSize.h}
-                fill={a > 0 ? `rgb(0, 0, 0)` : "transparent"}
-                stroke={a > 0 ? `rgb(0, 0, 0)` : "transparent"}
-                fillOpacity={a > 0 ? Math.min(0.9, a * 0.9) : 0}
-                strokeOpacity={a > 0 ? Math.min(1.0, a * 1.0) : 0}
+                fill={finalIntensity > 0 ? finalColor : "transparent"}
+                stroke={finalIntensity > 0 ? finalColor : "transparent"}
+                fillOpacity={finalIntensity > 0 ? Math.min(0.9, finalIntensity * 0.9) : 0}
+                strokeOpacity={finalIntensity > 0 ? Math.min(1.0, finalIntensity * 1.0) : 0}
                 className={cn(
-                  "transition-opacity duration-200 ease-out", // Longer CSS transition for smoother effect (was duration-100)
+                  "transition-all duration-300 ease-out", // Smooth transitions for color changes
                   squaresClassName
                 )}
                 // Explicitly enable pointer events on the rects only. Since we track globally,

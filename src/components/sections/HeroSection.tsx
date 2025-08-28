@@ -176,7 +176,7 @@ export default function HeroSection() {
       </div>
 
       {/* Full Width Ruler Carousel - Below Main Content */}
-      <div className="absolute bottom-20 left-0 right-0 z-30 w-full">
+      <div className="absolute bottom-10 left-0 right-0 z-30 w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -193,7 +193,7 @@ export default function HeroSection() {
               { id: 7, title: "KWIKCNC" },
             ]}
             autoRotate={true}
-            autoRotateInterval={2000}
+            autoRotateInterval={1200}
           />
         </motion.div>
       </div>

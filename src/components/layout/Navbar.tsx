@@ -10,6 +10,7 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className="fixed top-4 left-0 right-0 z-50 h-16 flex items-center"
+
     >
       {/* Navbar Container with fixed greyish background */}
       <div className="max-w-4xl mx-auto px-4 w-full">
