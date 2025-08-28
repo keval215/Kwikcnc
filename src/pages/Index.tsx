@@ -1,7 +1,8 @@
 import { SmoothCursor } from "@/components/ui/smooth-cursor";
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/sections/HeroSection";
-import TechnologySection from "@/components/sections/TechnologySection";
+import StoryCarousel from "@/components/sections/StoryCarousel";
+import WhoAreYouSection from "@/components/sections/WhoAreYouSection";
 
 const Index = () => {
   return (
@@ -10,7 +11,8 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10">
         <HeroSection />
-        <TechnologySection />
+        <StoryCarousel />
+        <WhoAreYouSection />
       </main>
     </div>
   );

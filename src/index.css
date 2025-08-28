@@ -114,6 +114,31 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #000000;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #333333;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #000000 transparent;
+  }
 }
 
 /* Stencil Font Classes */
@@ -183,4 +208,13 @@
   transform: translateY(-3px);
   box-shadow: 0 12px 30px rgba(33, 37, 41, 0.4);
   background: hsl(var(--industrial-dark));
+}
+
+/* 3D Perspective for CometCard */
+.perspective-distant {
+  perspective: 1000px;
+}
+
+.transform-3d {
+  transform-style: preserve-3d;
 }
