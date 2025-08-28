@@ -19,7 +19,7 @@ export const HyperText = ({
   children,
   className,
   animateOnLoad = true,
-  duration = 800,
+  duration = 200,
   triggerOnHover = false,
   framerProps = {
     initial: { opacity: 0, y: -10 },
